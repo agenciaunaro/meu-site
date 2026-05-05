@@ -392,7 +392,17 @@ function renderTimes(d){
   const dow=new Date(currentYear,currentMonth,d).getDay();
   const SAT_SLOTS=['09:00','10:00','11:00','12:00','13:00'];
   const slots=dow===6?SAT_SLOTS:DEMO_SLOTS;
-  const available=slots.filter(t=>!busy.includes(t));
+  const now = new Date();
+  const isToday = (currentYear === now.getFullYear() && currentMonth === now.getMonth() && d === now.getDate());
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const available=slots.filter(t=>{
+    if(busy.includes(t)) return false;
+    if(isToday){
+      const [h,m] = t.split(':').map(Number);
+      return (h*60+m) > currentMinutes;
+    }
+    return true;
+  });
   if(!available.length){list.innerHTML='<p class="time-placeholder">Nenhum horário disponível neste dia.</p>';return;}
   available.forEach(t=>{
     const el=document.createElement('div');
@@ -513,16 +523,46 @@ function closeFormOnBg(e){
   if(e.target===document.getElementById('overlay')) closeForm();
 }
 
-function submitForm(){
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyI32JCPND1OYMXq7iFTBsnBOBASe5eqOwrPevQcGDytnerBJzx49d8c24YTCaZrgyq/exec';
+
+async function submitForm(){
   const name = document.getElementById('f-name').value.trim();
   const email = document.getElementById('f-email').value.trim();
+  const subject = document.getElementById('f-subject').value.trim();
   if(!name||!email){alert('Por favor, preencha nome e e-mail.');return;}
-  document.getElementById('form-body').style.display='none';
-  const dateLabel = document.getElementById('f-date-label').textContent;
-  const timeLabel = document.getElementById('f-time-label').textContent;
-  document.getElementById('success-detail').textContent =
-    name + ', sua reunião foi confirmada para ' + dateLabel + ' às ' + timeLabel.split(' - ')[0] + '.';
-  document.getElementById('form-success').style.display='block';
+  
+  const btn = document.getElementById('confirm-btn') || document.querySelector('.form-submit');
+  const submitBtn = document.querySelector('.form-submit');
+  submitBtn.textContent = 'Agendando...';
+  submitBtn.disabled = true;
+
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        subject: subject,
+        day: selectedDay,
+        month: currentMonth,
+        year: currentYear,
+        time: selectedTime
+      })
+    });
+
+    document.getElementById('form-body').style.display='none';
+    const dateLabel = document.getElementById('f-date-label').textContent;
+    const timeLabel = document.getElementById('f-time-label').textContent;
+    document.getElementById('success-detail').textContent =
+      name + ', sua reunião foi confirmada para ' + dateLabel + ' às ' + timeLabel.split(' - ')[0] + '. Você receberá um convite no e-mail ' + email + '.';
+    document.getElementById('form-success').style.display='block';
+  } catch(err) {
+    submitBtn.textContent = 'Criar uma reunião';
+    submitBtn.disabled = false;
+    alert('Erro ao agendar. Tente novamente.');
+  }
 }
 </script>
 </body>
