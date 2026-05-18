@@ -4,8 +4,4 @@
     <loc>https://agenciaunaro.com.br/</loc>
     <priority>1.0</priority>
   </url>
-  <url>
-    <loc>https://agenciaunaro.com.br/agenda_rodrigo.html</loc>
-    <priority>0.8</priority>
-  </url>
 </urlset>
