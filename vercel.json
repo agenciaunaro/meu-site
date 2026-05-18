@@ -4,9 +4,17 @@
     {
       "src": "*.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "sitemap.xml",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml"
+    },
     {
       "src": "/agenda_rodrigo.html",
       "dest": "/agenda_rodrigo.html"
