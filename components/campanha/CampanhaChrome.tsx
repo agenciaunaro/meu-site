@@ -73,8 +73,11 @@ export function CtaMobile({ wa, label }: { wa: string; label: string }) {
   );
 }
 
-declare global { interface Window { dataLayer?: object[] } }
-const push = (o: object) => { window.dataLayer = window.dataLayer || []; window.dataLayer.push(o); };
+const push = (o: object) => {
+  const w = window as Window & { dataLayer?: object[] };
+  w.dataLayer = w.dataLayer || [];
+  w.dataLayer.push(o);
+};
 
 /**
  * Eventos da campanha (dataLayer → GTM). Os cliques com data-event já são enviados pelo EventBridge do site.
