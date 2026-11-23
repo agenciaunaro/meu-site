@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* =========================================================
+   Sistema visual Unaro
+   Cores e fontes centralizadas aqui. Para ajustar à identidade
+   oficial, altere só estes tokens.
+   ========================================================= */
+@theme {
+  --color-ink: #101010;
+  --color-paper: #ffffff;
+  --color-mist: #f5f5f3;
+  --color-stone: #888888;
+  --color-line: #e4e4e1;
+  --color-line-dark: #2a2a2a;
+  --color-ash: #5f5f5c; /* cinza de texto com contraste AA sobre branco */
+  --color-smoke: #a3a3a0; /* cinza de texto com contraste AA sobre preto */
+  --color-accent: #101010; /* cor de destaque: trocar quando a identidade oficial for confirmada */
+
+  --font-display: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), ui-serif, Georgia, serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --breakpoint-xs: 26rem;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--color-ink); color: var(--color-paper); }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 2px; }
+  img { max-width: 100%; height: auto; }
+}
+
+/* ---------- Escala tipográfica (fluida) ---------- */
+@utility t-display { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.045em; line-height: 0.94; font-size: clamp(2.9rem, 1.4rem + 7.2vw, 8.6rem); }
+@utility t-h1 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.04em; line-height: 0.98; font-size: clamp(2.5rem, 1.5rem + 4.6vw, 6rem); }
+@utility t-h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.035em; line-height: 1.02; font-size: clamp(2rem, 1.35rem + 2.9vw, 4.25rem); }
+@utility t-h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.025em; line-height: 1.1; font-size: clamp(1.4rem, 1.15rem + 1vw, 2rem); }
+@utility t-lead { font-size: clamp(1.08rem, 1rem + 0.35vw, 1.3rem); line-height: 1.55; }
+@utility t-eyebrow { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+@utility serif-accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+
+@utility container-x { width: 100%; max-width: 92rem; margin-inline: auto; padding-inline: clamp(1.25rem, 0.5rem + 3.2vw, 3.5rem); }
+@utility section-y { padding-block: clamp(5rem, 3rem + 8vw, 10rem); }
+
+/* ---------- Animações de entrada ---------- */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s var(--ease-out-soft), transform 0.9s var(--ease-out-soft); }
+.reveal.is-in { opacity: 1; transform: none; }
+.no-js .reveal { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .marquee-track { animation: none !important; }
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee-track { animation: marquee 38s linear infinite; }
+
+@keyframes word-in { from { opacity: 0; transform: translateY(0.35em); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+.word-in { animation: word-in 0.7s var(--ease-out-soft) both; }
+
+@keyframes caret { 50% { opacity: 0; } }
+.caret::after { content: ""; display: inline-block; width: 0.08em; height: 0.95em; background: currentColor; margin-left: 0.08em; vertical-align: -0.1em; animation: caret 1s steps(1) infinite; }
+
+/* Sublinhado animado de links */
+.link-u { background-image: linear-gradient(currentColor, currentColor); background-size: 0% 1px; background-repeat: no-repeat; background-position: 0 100%; transition: background-size 0.5s var(--ease-out-soft); }
+.link-u:hover, .link-u:focus-visible { background-size: 100% 1px; }
+
+/* Grão sutil para seções escuras */
+.grain { position: relative; isolation: isolate; }
+.grain::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.06; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* ---------- Tipografia de artigos ---------- */
+.prose-unaro { font-size: 1.125rem; line-height: 1.75; color: #1c1c1c; }
+.prose-unaro > * + * { margin-top: 1.4em; }
+.prose-unaro h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.03em; font-size: clamp(1.6rem, 1.3rem + 1.1vw, 2.25rem); line-height: 1.12; margin-top: 2.4em; scroll-margin-top: 6rem; color: var(--color-ink); }
+.prose-unaro h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.35rem; margin-top: 2em; }
+.prose-unaro ul { padding-left: 0; list-style: none; }
+.prose-unaro ul li { position: relative; padding-left: 1.6em; }
+.prose-unaro ul li + li { margin-top: 0.6em; }
+.prose-unaro ul li::before { content: ""; position: absolute; left: 0; top: 0.8em; width: 0.8em; height: 1px; background: var(--color-ink); }
+.prose-unaro blockquote { font-family: var(--font-serif); font-style: italic; font-size: 1.6rem; line-height: 1.35; border-left: 1px solid var(--color-ink); padding-left: 1.2em; }
+.prose-unaro table { width: 100%; border-collapse: collapse; font-size: 0.98rem; line-height: 1.5; }
+.prose-unaro th, .prose-unaro td { text-align: left; padding: 0.85em 0.9em 0.85em 0; border-bottom: 1px solid var(--color-line); vertical-align: top; }
+.prose-unaro th { font-family: var(--font-display); font-weight: 500; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ash); }
+.prose-unaro a { text-decoration: underline; text-underline-offset: 3px; }
